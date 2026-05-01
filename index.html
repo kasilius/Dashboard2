@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المختبر الذكي - كشف الأهداف التدريجي</title>
+    <title>منصة المختبر الذكي - النسخة المحدثة</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
@@ -23,44 +23,41 @@
         .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; }
         .active .status-dot { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
         .main-stage { flex: 1; display: flex; flex-direction: column; }
-        .tabs-header { background: #f1f5f9; display: flex; padding: 10px 20px 0 20px; gap: 5px; border-bottom: 2px solid #e2e8f0; }
-        .tab-btn { padding: 12px 25px; border: none; background: #e2e8f0; color: #64748b; cursor: pointer; font-family: 'Changa', sans-serif; border-radius: 10px 10px 0 0; transition: 0.3s; }
+        .tabs-header { background: #f1f5f9; display: flex; padding: 10px 20px 0 20px; gap: 5px; border-bottom: 2px solid #e2e8f0; overflow-x: auto; }
+        .tab-btn { padding: 12px 25px; border: none; background: #e2e8f0; color: #64748b; cursor: pointer; font-family: 'Changa', sans-serif; border-radius: 10px 10px 0 0; transition: 0.3s; white-space: nowrap; }
         .tab-btn.active { background: #ffffff; color: var(--accent-blue); font-weight: bold; }
         .content-area { flex: 1; padding: 15px; position: relative; }
-        iframe { width: 100%; height: 100%; border-radius: 15px; border: 1px solid #e2e8f0; }
-        .admin-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
+        iframe { width: 100%; height: 100%; border-radius: 15px; border: 1px solid #e2e8f0; background: white; }
+        .admin-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 1000; background: white; border-radius: 50%; width: 50px; height: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .admin-panel { position: fixed; left: 0; top: 0; width: 350px; height: 100%; background: white; box-shadow: 5px 0 20px rgba(0,0,0,0.2); padding: 25px; z-index: 1001; overflow-y: auto; }
-        .admin-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
-        .btn-add { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .admin-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; font-family: 'Tajawal'; }
+        .btn-add { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .delete-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fff1f1; margin-bottom: 5px; border-radius: 5px; border: 1px solid #fed7d7; }
     </style>
 </head>
 <body>
 
 <div id="app">
+    <!-- الجانب الأيمن: الأهداف -->
     <aside class="sidebar-left">
         <div class="sidebar-header">
             <h2 class="lesson-title">{{ lessonTitle }}</h2>
-            <div style="font-size: 0.8rem; margin-top: 5px; opacity: 0.9;">انقر على الهدف لكشف التفاصيل</div>
         </div>
         <div class="objectives-list">
-            <div v-for="(obj, index) in currentTabGoals" :key="index" class="objective-card animate__animated animate__fadeInRight" :class="{ 'active': activeGoalIndex === index }" @click="activeGoalIndex = (activeGoalIndex === index ? null : index)">
+            <div v-for="(obj, index) in currentTabGoals" :key="index" class="objective-card" :class="{ 'active': activeGoalIndex === index }" @click="activeGoalIndex = (activeGoalIndex === index ? null : index)">
                 <div class="obj-header">
                     <div class="status-dot"></div>
-                    <span>الهدف {{ index + 1 }}</span>
+                    <span>{{ obj }}</span>
                 </div>
-                <transition name="fade">
-                    <div v-if="activeGoalIndex === index" class="obj-content animate__animated animate__fadeIn">
-                        {{ obj }}
-                    </div>
-                </transition>
             </div>
             <div v-if="currentTabGoals.length === 0" style="text-align: center; color: #94a3b8; margin-top: 50px;">
-                📍 بانتظار تحديد الأهداف..
+                📍 لا توجد أهداف لهذا النشاط
             </div>
         </div>
-        <button class="admin-toggle" @click="showAdmin = true" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">⚙️</button>
+        <button class="admin-toggle" @click="showAdmin = true">⚙️</button>
     </aside>
 
+    <!-- منطقة العرض -->
     <main class="main-stage">
         <nav class="tabs-header">
             <button v-for="(tab, index) in dynamicTabs" :key="index" @click="activeTabId = index; activeGoalIndex = null" :class="['tab-btn', { active: activeTabId === index }]">
@@ -69,22 +66,37 @@
         </nav>
         <div class="content-area">
             <iframe v-if="dynamicTabs.length > 0" :src="formatUrl(dynamicTabs[activeTabId].url)" allowfullscreen></iframe>
+            <div v-else style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8;">
+                يرجى إضافة نشاط من الإعدادات ⚙️
+            </div>
         </div>
     </main>
 
+    <!-- لوحة الإدارة -->
     <div v-if="showAdmin" class="admin-panel animate__animated animate__slideInLeft">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <h3 style="margin:0; color:var(--accent-blue);">إعدادات الدرس</h3>
-            <button @click="showAdmin = false" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <button @click="showAdmin = false" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">✕</button>
         </div>
+
         <label>عنوان الدرس:</label>
         <input v-model="lessonTitle" class="admin-input">
-        <hr style="margin:20px 0;">
-        <h4>إضافة نشاط (تاب) جديد:</h4>
-        <input v-model="newTab.label" placeholder="اسم التاب (مثلاً: موقع إثرائي)" class="admin-input">
-        <input v-model="newTab.url" placeholder="ضع الرابط هنا" class="admin-input">
-        <textarea v-model="newTab.goals" placeholder="اكتب الأهداف هنا (كل هدف في سطر)" class="admin-input" rows="5"></textarea>
-        <button class="btn-add" @click="addNewTab">إضافة النشاط والبدء 🚀</button>
+
+        <hr>
+
+        <h4>إضافة تاب جديد:</h4>
+        <input v-model="newTab.label" placeholder="اسم التاب" class="admin-input">
+        <input v-model="newTab.url" placeholder="الرابط (موقع أو فيديو)" class="admin-input">
+        <textarea v-model="newTab.goals" placeholder="الأهداف (هدف في كل سطر)" class="admin-input" rows="3"></textarea>
+        <button class="btn-add" @click="addNewTab">إضافة النشاط ✅</button>
+
+        <hr>
+
+        <h4>إدارة التابات الحالية:</h4>
+        <div v-for="(tab, idx) in dynamicTabs" :key="idx" class="delete-list-item">
+            <span style="font-size: 0.9rem;">{{ tab.label }}</span>
+            <button @click="removeTab(idx)" style="background:#ff4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">حذف</button>
+        </div>
     </div>
 </div>
 
@@ -92,20 +104,20 @@
     const { createApp, ref, computed } = Vue;
     createApp({
         setup() {
-            const lessonTitle = ref('تفاعلات الكيمياء');
+            const lessonTitle = ref('درس جديد');
             const activeTabId = ref(0);
             const activeGoalIndex = ref(null);
             const showAdmin = ref(false);
             const dynamicTabs = ref([
-                { 
-                    label: 'التمهيد 🔬', 
-                    url: 'https://www.wikipedia.org', // مثال لرابط موقع عادي
-                    goals: ['أن يحدد الطالب موضوع الدرس.', 'أن يربط الدرس بالمعلومات السابقة.']
-                }
+                { label: 'الرئيسية 🏠', url: 'https://bing.com', goals: ['الهدف الأول للدرس'] }
             ]);
 
             const newTab = ref({ label: '', url: '', goals: '' });
-            const currentTabGoals = computed(() => dynamicTabs.value[activeTabId.value]?.goals || []);
+
+            const currentTabGoals = computed(() => {
+                if (dynamicTabs.value.length === 0) return [];
+                return dynamicTabs.value[activeTabId.value]?.goals || [];
+            });
 
             const addNewTab = () => {
                 if (newTab.value.label && newTab.value.url) {
@@ -122,22 +134,26 @@
 
             const removeTab = (idx) => {
                 dynamicTabs.value.splice(idx, 1);
-                if (activeTabId.value >= dynamicTabs.value.length) activeTabId.value = 0;
+                // تصحيح التاب النشط بعد الحذف
+                if (activeTabId.value >= dynamicTabs.value.length) {
+                    activeTabId.value = Math.max(0, dynamicTabs.value.length - 1);
+                }
             };
 
-            // الدالة المصلحة لتعمل مع كل الروابط
             const formatUrl = (url) => {
                 if (!url) return '';
-                let formatted = url.trim();
-                // إذا كان الرابط يوتيوب عادي، حوله لـ embed ليعمل داخل الـ iframe
-                if (formatted.includes('youtube.com/watch?v=')) {
-                    return formatted.replace('watch?v=', 'embed/');
-                }
-                if (formatted.includes('youtu.be/')) {
-                    const id = formatted.split('/').pop();
+                let u = url.trim();
+                // تنظيف وتحويل روابط يوتيوب فقط
+                if (u.includes('youtube.com/watch?v=')) {
+                    let id = u.split('v=')[1].split('&')[0];
                     return `https://www.youtube.com/embed/${id}`;
                 }
-                return formatted; // أي رابط آخر سيفتح كما هو
+                if (u.includes('youtu.be/')) {
+                    let id = u.split('/').pop();
+                    return `https://www.youtube.com/embed/${id}`;
+                }
+                // أي رابط آخر يظهر كما هو
+                return u;
             };
 
             return { lessonTitle, activeTabId, activeGoalIndex, showAdmin, dynamicTabs, newTab, currentTabGoals, addNewTab, removeTab, formatUrl };
