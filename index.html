@@ -3,243 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الكيمياء المتطورة - مدرسة ناصر بن عبدالله</title>
+    <title>منصة المختبر الذكي - كشف الأهداف التدريجي</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1e3a8a; --accent-red: #ef4444; --sidebar-w: 340px; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Tajawal', sans-serif; overflow: hidden; background: #f8fafc; }
-        #app { display: flex; height: 100vh; }
-
-        /* القائمة الجانبية */
-        .sidebar { 
-            width: var(--sidebar-w); background: white; border-left: 2px solid #e2e8f0; 
-            display: flex; flex-direction: column; transition: 0.4s; z-index: 1000;
-        }
-        .sidebar.collapsed { margin-right: -340px; }
-        .sidebar-header { padding: 20px; background: var(--primary); color: white; text-align: center; }
-
-        /* الإعدادات المتحركة (Accordion) */
-        .admin-section { background: #f1f5f9; overflow: hidden; transition: max-height 0.4s ease; max-height: 0; }
-        .admin-section.open { max-height: 600px; padding: 15px; border-bottom: 3px solid var(--primary); }
-
-        /* منطقة الأهداف */
-        .content-area { flex: 1; overflow-y: auto; padding: 15px; }
-        .goal-item { background: #fff; border: 1px solid #e2e8f0; border-right: 5px solid var(--primary); border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; }
-        .goal-item:hover { background: #f1f5f9; }
-        .goal-header { padding: 12px; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        .goal-content { padding: 12px; border-top: 1px solid #eee; font-size: 0.95rem; color: #444; line-height: 1.6; background: #fafafa; }
-
-        /* التوقيع الثابت */
-        .footer-branding { padding: 20px; background: white; border-top: 2px solid #e2e8f0; text-align: center; }
-        .dept-name { color: var(--accent-red); font-family: 'Changa'; font-size: 1.3rem; font-weight: bold; display: block; }
-        .school-name { color: var(--primary); font-family: 'Changa'; font-size: 1rem; margin-top: 5px; }
-
-        /* المسرح الرئيسي */
-        .main-stage { flex: 1; display: flex; flex-direction: column; position: relative; background: #000; }
-        .tabs-nav { background: #0f172a; display: flex; padding: 10px 15px 0; gap: 5px; }
-        .tab-btn { padding: 10px 20px; border: none; background: #334155; color: #94a3b8; cursor: pointer; border-radius: 8px 8px 0 0; font-family: 'Changa'; font-size: 0.9rem; }
-        .tab-btn.active { background: white; color: var(--primary); font-weight: bold; }
-
-        /* طبقة الرسم والمعايرة */
-        .canvas-container { flex: 1; position: relative; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; position: absolute; top:0; left:0; }
-        canvas { position: absolute; top: 0; left: 0; z-index: 50; pointer-events: none; }
-        canvas.active { pointer-events: auto; cursor: crosshair; }
-
-        /* شريط الأدوات الذكي */
-        .toolbar { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: rgba(255,255,255,0.98); padding: 12px 25px; border-radius: 50px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 20px; z-index: 2000;
-        }
-        .tool-box { display: flex; align-items: center; gap: 10px; border-left: 1px solid #ddd; padding-left: 15px; }
-        .draw-toggle { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; }
-        input[type="color"] { border: none; width: 35px; height: 35px; cursor: pointer; background: none; }
-        input[type="range"] { width: 100px; cursor: pointer; }
+        :root { --bg-main: #f8fafc; --sidebar-bg: #ffffff; --accent-blue: #3b82f6; --accent-green: #10b981; --text-dark: #1e293b; --sidebar-width: 320px; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Tajawal', sans-serif; background-color: var(--bg-main); overflow: hidden; }
+        #app { display: flex; height: 100vh; width: 100vw; }
+        .sidebar-left { width: var(--sidebar-width); background: var(--sidebar-bg); border-left: 2px solid #e2e8f0; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.05); z-index: 100; }
+        .sidebar-header { padding: 20px; background: var(--accent-blue); color: white; text-align: center; }
+        .lesson-title { font-family: 'Changa', sans-serif; margin: 0; font-size: 1.4rem; }
+        .objectives-list { flex: 1; padding: 15px; overflow-y: auto; }
+        .objective-card { background: #f1f5f9; border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease; border: 1px solid #e2e8f0; overflow: hidden; }
+        .objective-card:hover { border-color: var(--accent-blue); transform: translateX(-5px); }
+        .objective-card.active { background: #ffffff; border-right: 5px solid var(--accent-green); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .obj-header { padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--text-dark); }
+        .obj-content { padding: 0 15px 15px 15px; color: #475569; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #f1f5f9; background: #fdfdfd; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; }
+        .active .status-dot { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .main-stage { flex: 1; display: flex; flex-direction: column; }
+        .tabs-header { background: #f1f5f9; display: flex; padding: 10px 20px 0 20px; gap: 5px; border-bottom: 2px solid #e2e8f0; }
+        .tab-btn { padding: 12px 25px; border: none; background: #e2e8f0; color: #64748b; cursor: pointer; font-family: 'Changa', sans-serif; border-radius: 10px 10px 0 0; transition: 0.3s; }
+        .tab-btn.active { background: #ffffff; color: var(--accent-blue); font-weight: bold; }
+        .content-area { flex: 1; padding: 15px; position: relative; }
+        iframe { width: 100%; height: 100%; border-radius: 15px; border: 1px solid #e2e8f0; }
+        .admin-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
+        .admin-panel { position: fixed; left: 0; top: 0; width: 350px; height: 100%; background: white; box-shadow: 5px 0 20px rgba(0,0,0,0.2); padding: 25px; z-index: 1001; overflow-y: auto; }
+        .admin-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
+        .btn-add { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
+
 <div id="app">
-    <!-- السايدبار -->
-    <aside class="sidebar" :class="{ collapsed: isFullScreen }">
+    <aside class="sidebar-left">
         <div class="sidebar-header">
-            <h3 style="margin:0; font-family:'Changa'">{{ lessonTitle }}</h3>
-            <button @click="showAdmin = !showAdmin" style="background:none; border:none; color:#cbd5e1; cursor:pointer; font-size:0.8rem; margin-top:8px; text-decoration:underline;">
-                {{ showAdmin ? '✕ إغلاق الإعدادات' : '⚙️ إعدادات الدرس' }}
-            </button>
+            <h2 class="lesson-title">{{ lessonTitle }}</h2>
+            <div style="font-size: 0.8rem; margin-top: 5px; opacity: 0.9;">انقر على الهدف لكشف التفاصيل</div>
         </div>
-
-        <!-- قائمة الإعدادات المتحركة -->
-        <div class="admin-section" :class="{ open: showAdmin }">
-            <input v-model="lessonTitle" placeholder="اسم الدرس" @input="save" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            <div style="background:white; padding:10px; border-radius:8px;">
-                <p style="margin:0 0 10px; font-weight:bold; font-size:0.8rem;">إضافة نشاط جديد:</p>
-                <input v-model="newTab.label" placeholder="عنوان النشاط" style="width:100%; margin-bottom:8px; padding:8px;">
-                <input v-model="newTab.url" placeholder="رابط يوتيوب" style="width:100%; margin-bottom:8px; padding:8px;">
-                <textarea v-model="newTab.goals" placeholder="الأهداف (كل سطر هدف)" rows="3" style="width:100%; padding:8px;"></textarea>
-                <button @click="addTab" style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold;">حفظ النشاط</button>
-            </div>
-        </div>
-
-        <!-- الأهداف التفاعلية -->
-        <div class="content-area">
-            <div v-for="(obj, i) in currentGoals" :key="i" class="goal-item" @click="activeGoal = (activeGoal === i ? null : i)">
-                <div class="goal-header">
-                    <span>🎯 الهدف {{ i + 1 }}</span>
-                    <span>{{ activeGoal === i ? '▲' : '▼' }}</span>
+        <div class="objectives-list">
+            <div v-for="(obj, index) in currentTabGoals" :key="index" class="objective-card animate__animated animate__fadeInRight" :class="{ 'active': activeGoalIndex === index }" @click="activeGoalIndex = (activeGoalIndex === index ? null : index)">
+                <div class="obj-header">
+                    <div class="status-dot"></div>
+                    <span>الهدف {{ index + 1 }}</span>
                 </div>
-                <div v-if="activeGoal === i" class="goal-content animate__animated animate__fadeIn"> {{ obj }} </div>
+                <transition name="fade">
+                    <div v-if="activeGoalIndex === index" class="obj-content animate__animated animate__fadeIn">
+                        {{ obj }}
+                    </div>
+                </transition>
             </div>
-            <div v-if="currentGoals.length === 0" style="text-align:center; color:#94a3b8; margin-top:50px;">أضف أهدافاً من الإعدادات</div>
+            <div v-if="currentTabGoals.length === 0" style="text-align: center; color: #94a3b8; margin-top: 50px;">
+                📍 بانتظار تحديد الأهداف..
+            </div>
         </div>
-
-        <!-- التوقيع الرسمي -->
-        <footer class="footer-branding">
-            <span class="dept-name">قسم الكيمياء</span>
-            <div class="school-name">مدرسة ناصر بن عبدالله العطية<br>الثانوية للبنين</div>
-        </footer>
+        <button class="admin-toggle" @click="showAdmin = true" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">⚙️</button>
     </aside>
 
-    <!-- منطقة العرض -->
     <main class="main-stage">
-        <nav class="tabs-nav">
-            <button v-for="(t, i) in tabs" :key="i" @click="changeTab(i)" class="tab-btn" :class="{ active: activeTab === i }">
-                {{ t.label }}
+        <nav class="tabs-header">
+            <button v-for="(tab, index) in dynamicTabs" :key="index" @click="activeTabId = index; activeGoalIndex = null" :class="['tab-btn', { active: activeTabId === index }]">
+                {{ tab.label }}
             </button>
         </nav>
-
-        <div class="canvas-container" id="stage">
-            <iframe v-if="tabs.length > 0" :src="cleanUrl(tabs[activeTab].url)" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <!-- سبورة الرسم -->
-            <canvas id="mainCanvas" :class="{ active: isDrawingMode }" 
-                    @mousedown="start" @mousemove="draw" @mouseup="stop" @mouseleave="stop"></canvas>
-        </div>
-
-        <!-- شريط الأدوات المطور -->
-        <div class="toolbar animate__animated animate__fadeInUp">
-            <button class="draw-toggle" @click="toggleDrawing">
-                {{ isDrawingMode ? '✅ إنهاء الرسم' : '✏️ رسم فوق الفيديو' }}
-            </button>
-            
-            <template v-if="isDrawingMode">
-                <div class="tool-box">
-                    <input type="color" v-model="brushColor">
-                </div>
-                <div class="tool-box">
-                    <input type="range" min="1" max="20" v-model="brushSize">
-                    <span style="font-size:0.8rem; font-weight:bold; width:20px;">{{ brushSize }}</span>
-                </div>
-                <button @click="clear" style="background:var(--accent-red); color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer;">🗑️ مسح</button>
-            </template>
-
-            <button @click="isFullScreen = !isFullScreen" style="border:none; background:none; cursor:pointer; font-size:1.5rem;">
-                {{ isFullScreen ? '📂' : '🖥️' }}
-            </button>
+        <div class="content-area">
+            <iframe v-if="dynamicTabs.length > 0" :src="formatUrl(dynamicTabs[activeTabId].url)" allowfullscreen></iframe>
         </div>
     </main>
+
+    <div v-if="showAdmin" class="admin-panel animate__animated animate__slideInLeft">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0; color:var(--accent-blue);">إعدادات الدرس</h3>
+            <button @click="showAdmin = false" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <label>عنوان الدرس:</label>
+        <input v-model="lessonTitle" class="admin-input">
+        <hr style="margin:20px 0;">
+        <h4>إضافة نشاط (تاب) جديد:</h4>
+        <input v-model="newTab.label" placeholder="اسم التاب (مثلاً: موقع إثرائي)" class="admin-input">
+        <input v-model="newTab.url" placeholder="ضع الرابط هنا" class="admin-input">
+        <textarea v-model="newTab.goals" placeholder="اكتب الأهداف هنا (كل هدف في سطر)" class="admin-input" rows="5"></textarea>
+        <button class="btn-add" @click="addNewTab">إضافة النشاط والبدء 🚀</button>
+    </div>
 </div>
 
 <script>
-    const { createApp, ref, onMounted, computed, watch } = Vue;
+    const { createApp, ref, computed } = Vue;
     createApp({
         setup() {
-            const lessonTitle = ref('مختبر الكيمياء الذكي');
-            const tabs = ref([]);
-            const activeTab = ref(0);
-            const activeGoal = ref(null);
+            const lessonTitle = ref('تفاعلات الكيمياء');
+            const activeTabId = ref(0);
+            const activeGoalIndex = ref(null);
             const showAdmin = ref(false);
-            const isFullScreen = ref(false);
-            const isDrawingMode = ref(false);
-            const brushColor = ref('#ff0000');
-            const brushSize = ref(5);
+            const dynamicTabs = ref([
+                { 
+                    label: 'التمهيد 🔬', 
+                    url: 'https://www.wikipedia.org', // مثال لرابط موقع عادي
+                    goals: ['أن يحدد الطالب موضوع الدرس.', 'أن يربط الدرس بالمعلومات السابقة.']
+                }
+            ]);
+
             const newTab = ref({ label: '', url: '', goals: '' });
+            const currentTabGoals = computed(() => dynamicTabs.value[activeTabId.value]?.goals || []);
 
-            let canvas, ctx, painting = false;
-
-            // --- نظام المعايرة (Calibration) ---
-            const setupCanvas = () => {
-                canvas = document.getElementById('mainCanvas');
-                const container = document.getElementById('stage');
-                canvas.width = container.clientWidth;
-                canvas.height = container.clientHeight;
-                ctx = canvas.getContext('2d');
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-            };
-
-            const toggleDrawing = () => {
-                isDrawingMode.value = !isDrawingMode.value;
-                if(isDrawingMode.value) setTimeout(setupCanvas, 10);
-            };
-
-            const start = (e) => { painting = true; draw(e); };
-            const stop = () => { painting = false; ctx.beginPath(); };
-            
-            const draw = (e) => {
-                if(!painting || !isDrawingMode.value) return;
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                ctx.lineWidth = brushSize.value;
-                ctx.strokeStyle = brushColor.value;
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            };
-
-            const clear = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const cleanUrl = (url) => {
-                // حل مشكلة Error 153 عن طريق تحسين صياغة الرابط
-                let id = "";
-                if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
-                else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
-                else id = url;
-                return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1&origin=${window.location.origin}`;
-            };
-
-            const addTab = () => {
-                if(newTab.value.label && newTab.value.url) {
-                    tabs.value.push({
+            const addNewTab = () => {
+                if (newTab.value.label && newTab.value.url) {
+                    const goalsArray = newTab.value.goals.split('\n').filter(g => g.trim() !== '');
+                    dynamicTabs.value.push({
                         label: newTab.value.label,
                         url: newTab.value.url,
-                        goals: newTab.value.goals.split('\n').filter(g => g.trim())
+                        goals: goalsArray
                     });
-                    save();
                     newTab.value = { label: '', url: '', goals: '' };
-                    showAdmin.value = false;
+                    activeTabId.value = dynamicTabs.value.length - 1;
                 }
             };
 
-            const changeTab = (i) => {
-                activeTab.value = i;
-                activeGoal.value = null;
-                if(isDrawingMode.value) clear();
+            const removeTab = (idx) => {
+                dynamicTabs.value.splice(idx, 1);
+                if (activeTabId.value >= dynamicTabs.value.length) activeTabId.value = 0;
             };
 
-            const save = () => localStorage.setItem('nasser_chem_vfinal', JSON.stringify({title: lessonTitle.value, tabs: tabs.value}));
-
-            onMounted(() => {
-                const data = localStorage.getItem('nasser_chem_vfinal');
-                if(data) {
-                    const p = JSON.parse(data);
-                    tabs.value = p.tabs;
-                    lessonTitle.value = p.title;
-                } else {
-                    tabs.value = [{ label: 'مقدمة الدرس', url: 'dQw4w9WgXcQ', goals: ['الهدف الأول للحصة','الهدف الثاني للنشاط'] }];
+            // الدالة المصلحة لتعمل مع كل الروابط
+            const formatUrl = (url) => {
+                if (!url) return '';
+                let formatted = url.trim();
+                // إذا كان الرابط يوتيوب عادي، حوله لـ embed ليعمل داخل الـ iframe
+                if (formatted.includes('youtube.com/watch?v=')) {
+                    return formatted.replace('watch?v=', 'embed/');
                 }
-                window.addEventListener('resize', setupCanvas);
-            });
+                if (formatted.includes('youtu.be/')) {
+                    const id = formatted.split('/').pop();
+                    return `https://www.youtube.com/embed/${id}`;
+                }
+                return formatted; // أي رابط آخر سيفتح كما هو
+            };
 
-            watch(isFullScreen, () => {
-                setTimeout(setupCanvas, 450); // انتظار انتهاء أنيميشن السايدبار
-            });
-
-            return { lessonTitle, tabs, activeTab, activeGoal, showAdmin, isFullScreen, isDrawingMode, brushColor, brushSize, newTab, start, draw, stop, clear, cleanUrl, addTab, changeTab, toggleDrawing, save, currentGoals: computed(() => tabs.value[activeTab.value]?.goals || []) };
+            return { lessonTitle, activeTabId, activeGoalIndex, showAdmin, dynamicTabs, newTab, currentTabGoals, addNewTab, removeTab, formatUrl };
         }
     }).mount('#app');
 </script>
